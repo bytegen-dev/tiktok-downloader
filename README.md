@@ -1,18 +1,19 @@
-# TikTok Video Downloader
+# TikTok Video Downloader API
 
-A lightweight, production-ready full-stack application for downloading TikTok videos without watermarks. Built with Express.js, Next.js, TypeScript, and yt-dlp.
+A lightweight, production-ready REST API for downloading TikTok videos without watermarks. Built with Express.js, TypeScript, and yt-dlp. Includes an optional web interface for convenience.
 
 <img width="699" height="691" alt="image" src="https://github.com/user-attachments/assets/872a5672-bd03-42f1-b820-aefb8c0c567d" />
 
 ## Features
 
-- **Web Interface** - Clean, minimal dark mode UI built with Next.js
-- **API Endpoint** - Simple GET request with TikTok URL
+- **REST API** - Simple GET endpoint for downloading TikTok videos
 - **No watermark** - Downloads clean videos directly
 - **Streaming** - Efficiently streams videos without saving to disk
 - **Range requests** - Supports video seeking and partial content
+- **Video metadata** - Get thumbnail, title, and uploader info
 - **Rate limiting** - 5 requests per minute per IP
 - **Error handling** - Graceful handling of invalid URLs, private videos, etc.
+- **Web interface** - Optional minimal dark mode UI for easy testing (available at `/web`)
 - **Railway ready** - Pre-configured for easy deployment
 
 ## Prerequisites
@@ -42,44 +43,39 @@ npm install
 pip install yt-dlp
 ```
 
-## Usage
+## Quick Start
+
+### Installation
+
+```bash
+npm install
+npm run build
+npm start
+```
+
+The API will be available at `http://localhost:3000`
 
 ### Development
 
-Run backend in development mode with hot reload:
+Run API server with hot reload:
 
 ```bash
 npm run dev
 ```
 
-Run frontend in development mode (separate terminal):
+For frontend development (optional):
 
 ```bash
 npm run dev:frontend
 ```
 
-### Production
-
-Build and start:
-
-```bash
-npm run build
-npm start
-```
-
-The application will be available at:
-
-- Frontend: `http://localhost:3000/web`
-- API: `http://localhost:3000/download?url=<tiktok_url>`
-- Health check: `http://localhost:3000/health`
-
-## API Endpoints
+## API Documentation
 
 ### Download Video
 
 **GET** `/download?url=<tiktok_video_url>`
 
-Downloads a TikTok video without watermark.
+Downloads a TikTok video without watermark. Streams the video directly to the client.
 
 **Query Parameters:**
 
@@ -127,6 +123,30 @@ curl "http://localhost:3000/download?url=https://www.tiktok.com/@username/video/
 {
   "error": "Rate limit exceeded",
   "message": "Maximum 5 requests per minute allowed"
+}
+```
+
+### Get Video Metadata
+
+**GET** `/metadata?url=<tiktok_video_url>`
+
+Returns video information including thumbnail, title, uploader, and duration.
+
+**Example:**
+
+```bash
+curl "http://localhost:3000/metadata?url=https://www.tiktok.com/@username/video/1234567890"
+```
+
+**Response:**
+
+```json
+{
+  "id": "1234567890",
+  "title": "Video Title",
+  "thumbnail": "https://...",
+  "duration": 30,
+  "uploader": "username"
 }
 ```
 
@@ -183,15 +203,14 @@ The `nixpacks.toml` file ensures:
 
 ```
 tiktok-downloader/
-├── frontend/              # Next.js frontend application
-│   ├── app/              # Next.js app directory
-│   ├── components/       # React components
-│   └── package.json      # Frontend dependencies
 ├── src/
-│   └── server.ts         # Express backend server
+│   └── server.ts         # Express API server
+├── frontend/              # Optional web interface (convenience feature)
+│   ├── app/              # Next.js app directory
+│   └── components/       # React components
 ├── dist/                 # Compiled backend JavaScript
 ├── dist-frontend/        # Static frontend build output
-├── package.json          # Root dependencies and scripts
+├── package.json          # Dependencies and scripts
 ├── tsconfig.json         # TypeScript configuration
 ├── railway.json          # Railway deployment config
 ├── nixpacks.toml         # Railway build config
@@ -212,16 +231,18 @@ tiktok-downloader/
 
 ### How It Works
 
-1. **Frontend**: Next.js UI allows users to paste TikTok URLs and trigger downloads
-2. **URL Validation**: Validates the provided TikTok URL format
-3. **Video Extraction**: Uses `yt-dlp` to stream videos directly (no watermark)
-4. **Streaming**: Streams video directly to the client without saving to disk
-5. **Headers**: Sets proper headers for video download and seeking support
-6. **Error Handling**: Catches and returns user-friendly error messages
+1. **URL Validation**: Validates the provided TikTok URL format
+2. **Video Extraction**: Uses `yt-dlp` to stream videos directly (no watermark)
+3. **Streaming**: Streams video directly to the client without saving to disk
+4. **Headers**: Sets proper headers for video download and seeking support
+5. **Error Handling**: Returns JSON error responses for invalid requests
+
+The API can be used independently from any client. The web interface at `/web` is provided as a convenience for testing and quick downloads.
 
 ## Notes
 
 - Videos are streamed directly without being saved to disk
-- Frontend is built as static files and served by the Express server at `/web`
+- API can be used independently - the web interface is optional
 - Range requests are supported for video seeking
 - Rate limiting uses in-memory storage (resets on server restart)
+- Web interface available at `/web` for convenience (built as static files)
