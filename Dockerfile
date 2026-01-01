@@ -1,7 +1,8 @@
 # Stage 1: Build Next.js frontend
 FROM node:20-alpine AS frontend-builder
+WORKDIR /app
+COPY frontend/package.json frontend/package-lock.json ./frontend/
 WORKDIR /app/frontend
-COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ .
 RUN npm run build
@@ -35,8 +36,8 @@ RUN npm ci --only=production
 # Copy built backend from builder
 COPY --from=backend-builder /app/dist ./dist
 
-# Copy built frontend from builder
-COPY --from=frontend-builder /app/frontend/dist-frontend ./dist-frontend
+# Copy built frontend from builder (frontend builds to ../dist-frontend relative to frontend dir)
+COPY --from=frontend-builder /app/dist-frontend ./dist-frontend
 
 # Expose port (Railway uses $PORT)
 EXPOSE 3000
