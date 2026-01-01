@@ -1,6 +1,6 @@
 <img width="850" height="774" alt="image" src="https://github.com/user-attachments/assets/63986bc5-7269-45b5-ba00-03f8e72b6c09" />
 
-# tt-toolk1t (TikTok Toolkit)
+# tt-toolk1t.
 
 A collection of TikTok utilities and tools. Currently includes video downloading, metadata extraction, and user post fetching. Built with Express.js, TypeScript, and yt-dlp. More features coming soon.
 
