@@ -1,8 +1,8 @@
 <img width="850" height="774" alt="image" src="https://github.com/user-attachments/assets/63986bc5-7269-45b5-ba00-03f8e72b6c09" />
 
-# TikTok Video Downloader API
+# tt-toolk1t (TikTok Toolkit)
 
-A lightweight, production-ready REST API for downloading TikTok videos without watermarks. Built with Express.js, TypeScript, and yt-dlp. Includes an optional web interface for convenience.
+A collection of TikTok utilities and tools. Currently includes video downloading, metadata extraction, and user post fetching. Built with Express.js, TypeScript, and yt-dlp. More features coming soon.
 
 ## Live Demo
 
@@ -52,7 +52,7 @@ A lightweight, production-ready REST API for downloading TikTok videos without w
 
 ```bash
 git clone <your-repo-url>
-cd tiktok-downloader
+cd tt-toolk1t
 ```
 
 2. Install dependencies:
@@ -276,7 +276,7 @@ The `Dockerfile` ensures:
 ## Project Structure
 
 ```
-tiktok-downloader/
+tt-toolk1t/
 ├── src/
 │   └── server.ts         # Express API server
 ├── frontend/              # Optional web interface (convenience feature)

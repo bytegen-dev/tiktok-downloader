@@ -1,5 +1,5 @@
 services:
-  app:
+  tt-toolk1t:
     build:
       context: .
       dockerfile: Dockerfile

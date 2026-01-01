@@ -375,7 +375,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`TikTok Downloader API running on port ${PORT}`);
+  console.log(`tt-toolk1t (TikTok Toolkit) running on port ${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/health`);
   console.log(`Download endpoint: http://localhost:${PORT}/download?url=<tiktok_url>`);
   console.log(`Metadata endpoint: http://localhost:${PORT}/metadata?url=<tiktok_url>`);

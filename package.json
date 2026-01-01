@@ -1,7 +1,7 @@
 {
-  "name": "tiktok-downloader-api",
+  "name": "tt-toolk1t",
   "version": "1.0.0",
-  "description": "Lightweight TikTok video downloader API",
+  "description": "TikTok Toolkit - A collection of TikTok utilities and tools",
   "main": "dist/server.js",
   "scripts": {
     "build": "npm run build:frontend && npm run build:backend",
@@ -12,7 +12,7 @@
     "dev:frontend": "cd frontend && npm run dev",
     "type-check": "tsc --noEmit"
   },
-  "keywords": ["tiktok", "downloader", "api"],
+  "keywords": ["tiktok", "toolkit", "downloader", "api", "utilities"],
   "author": "",
   "license": "MIT",
   "dependencies": {
