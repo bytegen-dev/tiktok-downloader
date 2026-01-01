@@ -197,6 +197,60 @@ app.get('/download', rateLimiter, async (req: Request, res: Response) => {
   }
 });
 
+// Get video metadata (thumbnail, title, etc.)
+app.get('/metadata', rateLimiter, async (req: Request, res: Response) => {
+  try {
+    const url = req.query.url as string;
+    
+    if (!url) {
+      return res.status(400).json({
+        error: 'Missing URL parameter',
+        message: 'Please provide a TikTok video URL'
+      });
+    }
+    
+    if (!isValidTikTokUrl(url)) {
+      return res.status(400).json({
+        error: 'Invalid TikTok URL',
+        message: 'Please provide a valid TikTok video URL'
+      });
+    }
+    
+    try {
+      // Use yt-dlp to get video metadata as JSON
+      const command = `yt-dlp --dump-json --no-warnings "${url}"`;
+      const { stdout, stderr } = await execAsync(command);
+      
+      if (stderr && !stderr.includes('WARNING')) {
+        throw new Error(`yt-dlp error: ${stderr}`);
+      }
+      
+      const metadata = JSON.parse(stdout);
+      
+      // Extract useful info
+      const videoInfo = {
+        id: metadata.id || extractVideoId(url) || null,
+        title: metadata.title || 'TikTok Video',
+        thumbnail: metadata.thumbnail || null,
+        duration: metadata.duration || null,
+        uploader: metadata.uploader || metadata.uploader_id || null,
+      };
+      
+      res.json(videoInfo);
+    } catch (error: any) {
+      return res.status(500).json({
+        error: 'Metadata extraction failed',
+        message: error.message || 'Failed to extract video metadata'
+      });
+    }
+  } catch (error: any) {
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: error.message || 'An unexpected error occurred'
+    });
+  }
+});
+
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

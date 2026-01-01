@@ -1,52 +1,108 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+interface VideoMetadata {
+  id: string | null;
+  title: string;
+  thumbnail: string | null;
+  duration: number | null;
+  uploader: string | null;
+}
 
 export default function Home() {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [metadata, setMetadata] = useState<VideoMetadata | null>(null);
+  const [loadingMetadata, setLoadingMetadata] = useState(false);
 
   const handleDownload = async () => {
     if (!url.trim()) {
-      setError('Please enter a TikTok URL');
+      setError("Please enter a TikTok URL");
       return;
     }
 
     // Basic URL validation
     const tiktokUrlPattern = /(tiktok\.com|vt\.tiktok\.com|vm\.tiktok\.com)/;
     if (!tiktokUrlPattern.test(url)) {
-      setError('Please enter a valid TikTok URL');
+      setError("Please enter a valid TikTok URL");
       return;
     }
 
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       // Trigger download - use absolute path since we're at /web
-      const downloadUrl = `${window.location.origin}/download?url=${encodeURIComponent(url)}`;
-      window.open(downloadUrl, '_blank');
-      
+      const downloadUrl = `${
+        window.location.origin
+      }/download?url=${encodeURIComponent(url)}`;
+      window.open(downloadUrl, "_blank");
+
       // Reset after a delay
       setTimeout(() => {
         setLoading(false);
-        setUrl('');
+        setUrl("");
+        setMetadata(null);
       }, 2000);
     } catch (err) {
-      setError('Failed to download video. Please try again.');
+      setError("Failed to download video. Please try again.");
       setLoading(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !loading) {
+    if (e.key === "Enter" && !loading) {
       handleDownload();
     }
   };
+
+  // Fetch metadata when URL changes
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      if (!url.trim()) {
+        setMetadata(null);
+        return;
+      }
+
+      const tiktokUrlPattern = /(tiktok\.com|vt\.tiktok\.com|vm\.tiktok\.com)/;
+      if (!tiktokUrlPattern.test(url)) {
+        setMetadata(null);
+        return;
+      }
+
+      setLoadingMetadata(true);
+      try {
+        const response = await fetch(
+          `/metadata?url=${encodeURIComponent(url)}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setMetadata(data);
+        } else {
+          setMetadata(null);
+        }
+      } catch (err) {
+        setMetadata(null);
+      } finally {
+        setLoadingMetadata(false);
+      }
+    };
+
+    // Debounce metadata fetch
+    const timer = setTimeout(fetchMetadata, 500);
+    return () => clearTimeout(timer);
+  }, [url]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black p-4">
@@ -67,7 +123,10 @@ export default function Home() {
               value={url}
               onChange={(e) => {
                 setUrl(e.target.value);
-                setError('');
+                setError("");
+                if (!e.target.value.trim()) {
+                  setMetadata(null);
+                }
               }}
               onKeyPress={handleKeyPress}
               disabled={loading}
@@ -76,22 +135,60 @@ export default function Home() {
             {error && (
               <p className="text-sm text-white/80 font-medium">{error}</p>
             )}
+            {loadingMetadata && (
+              <p className="text-xs text-white/40">Loading preview...</p>
+            )}
+            {metadata && metadata.thumbnail && (
+              <div className="mt-4 space-y-2">
+                <div className="flex justify-center">
+                  <img
+                    src={metadata.thumbnail}
+                    alt={metadata.title}
+                    className="w-full max-w-md max-h-64 object-cover rounded border border-white/10"
+                  />
+                </div>
+                {metadata.title && (
+                  <p className="text-sm text-white/80 font-medium line-clamp-2">
+                    {metadata.title}
+                  </p>
+                )}
+                {metadata.uploader && (
+                  <p className="text-xs text-white/40">@{metadata.uploader}</p>
+                )}
+              </div>
+            )}
           </div>
           <Button
             onClick={handleDownload}
-            disabled={loading || !url.trim()}
+            disabled={loading || !url.trim() || loadingMetadata || !metadata}
             className="w-full h-12 text-base font-medium bg-white text-black hover:bg-white/90 disabled:bg-white/20 disabled:text-white/40"
           >
             {loading ? (
               <span className="flex items-center gap-2">
-                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Downloading...
               </span>
             ) : (
-              'Download Video'
+              "Download Video"
             )}
           </Button>
           <div className="pt-4 space-y-2 text-xs text-white/40">
