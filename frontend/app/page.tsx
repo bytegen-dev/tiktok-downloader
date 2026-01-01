@@ -49,13 +49,13 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
-      <Card className="w-full max-w-2xl shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center bg-black p-4">
+      <Card className="w-full max-w-2xl border border-white/10 bg-black">
         <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-medium text-white">
             TikTok Video Downloader
           </CardTitle>
-          <CardDescription className="text-lg">
+          <CardDescription className="text-white/60 text-sm">
             Download TikTok videos without watermarks
           </CardDescription>
         </CardHeader>
@@ -63,7 +63,7 @@ export default function Home() {
           <div className="space-y-2">
             <Input
               type="url"
-              placeholder="Paste TikTok URL here (e.g., https://www.tiktok.com/@user/video/123 or https://vt.tiktok.com/ABC123)"
+              placeholder="Paste TikTok URL here"
               value={url}
               onChange={(e) => {
                 setUrl(e.target.value);
@@ -71,16 +71,16 @@ export default function Home() {
               }}
               onKeyPress={handleKeyPress}
               disabled={loading}
-              className="h-12 text-base"
+              className="h-12 text-base bg-black border-white/20 text-white placeholder:text-white/40 focus:border-white/40"
             />
             {error && (
-              <p className="text-sm text-red-500 font-medium">{error}</p>
+              <p className="text-sm text-white/80 font-medium">{error}</p>
             )}
           </div>
           <Button
             onClick={handleDownload}
             disabled={loading || !url.trim()}
-            className="w-full h-12 text-base font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            className="w-full h-12 text-base font-medium bg-white text-black hover:bg-white/90 disabled:bg-white/20 disabled:text-white/40"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -94,12 +94,12 @@ export default function Home() {
               'Download Video'
             )}
           </Button>
-          <div className="pt-4 space-y-2 text-sm text-muted-foreground">
-            <p className="font-semibold">Supported URL formats:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li>https://www.tiktok.com/@username/video/1234567890</li>
-              <li>https://vt.tiktok.com/ABC123/</li>
-              <li>https://vm.tiktok.com/XYZ789/</li>
+          <div className="pt-4 space-y-2 text-xs text-white/40">
+            <p className="font-medium text-white/60">Supported formats:</p>
+            <ul className="space-y-1">
+              <li>tiktok.com/@user/video/123</li>
+              <li>vt.tiktok.com/ABC123</li>
+              <li>vm.tiktok.com/XYZ789</li>
             </ul>
           </div>
         </CardContent>
