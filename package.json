@@ -4,9 +4,12 @@
   "description": "Lightweight TikTok video downloader API",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:backend": "tsc",
+    "build:frontend": "cd frontend && npm install && npm run build",
     "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev:frontend": "cd frontend && npm run dev",
     "type-check": "tsc --noEmit"
   },
   "keywords": ["tiktok", "downloader", "api"],

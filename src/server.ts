@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { exec, spawn } from 'child_process';
 import { promisify } from 'util';
+import path from 'path';
 
 const execAsync = promisify(exec);
 const app = express();
@@ -201,6 +202,24 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Serve frontend static files at /web
+const frontendPath = path.join(__dirname, '../dist-frontend');
+
+// Serve static assets first
+app.use('/web', express.static(frontendPath, {
+  maxAge: '1y',
+  etag: true,
+}));
+
+// Handle frontend SPA routes - serve index.html for all /web routes that don't match static files
+app.get('/web', (req: Request, res: Response) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+app.get('/web/*', (req: Request, res: Response) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('Unhandled error:', err);
@@ -217,5 +236,6 @@ app.listen(PORT, () => {
   console.log(`TikTok Downloader API running on port ${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/health`);
   console.log(`Download endpoint: http://localhost:${PORT}/download?url=<tiktok_url>`);
+  console.log(`Frontend: http://localhost:${PORT}/web`);
 });
 
