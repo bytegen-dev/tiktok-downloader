@@ -25,6 +25,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [metadata, setMetadata] = useState<VideoMetadata | null>(null);
   const [loadingMetadata, setLoadingMetadata] = useState(false);
+  const [clipboardChecked, setClipboardChecked] = useState(false);
 
   const handleDownload = async () => {
     if (!url.trim()) {
@@ -67,6 +68,32 @@ export default function Home() {
     }
   };
 
+  // Auto-paste from clipboard on site load
+  useEffect(() => {
+    const pasteFromClipboard = async () => {
+      if (clipboardChecked) return;
+
+      try {
+        const clipboardText = await navigator.clipboard.readText();
+        if (clipboardText && clipboardText.trim()) {
+          // Check if it looks like a TikTok URL
+          const tiktokUrlPattern =
+            /(tiktok\.com|vt\.tiktok\.com|vm\.tiktok\.com)/;
+          if (tiktokUrlPattern.test(clipboardText)) {
+            setUrl(clipboardText.trim());
+          }
+        }
+      } catch (err) {
+        // Clipboard access denied or not available - silently fail
+        // This is expected in some browsers or if user hasn't granted permission
+      } finally {
+        setClipboardChecked(true);
+      }
+    };
+
+    pasteFromClipboard();
+  }, [clipboardChecked]);
+
   // Fetch metadata when URL changes
   useEffect(() => {
     const fetchMetadata = async () => {
@@ -75,8 +102,28 @@ export default function Home() {
         return;
       }
 
+      // Check if it's a complete URL (starts with http/https)
+      if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        setMetadata(null);
+        return;
+      }
+
+      // Check if it matches TikTok URL pattern
       const tiktokUrlPattern = /(tiktok\.com|vt\.tiktok\.com|vm\.tiktok\.com)/;
       if (!tiktokUrlPattern.test(url)) {
+        setMetadata(null);
+        return;
+      }
+
+      // Additional check: ensure URL has a path (not just domain)
+      try {
+        const urlObj = new URL(url);
+        if (urlObj.pathname.length <= 1) {
+          setMetadata(null);
+          return;
+        }
+      } catch {
+        // Invalid URL format
         setMetadata(null);
         return;
       }
