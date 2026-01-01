@@ -2,6 +2,8 @@
 
 A lightweight, production-ready full-stack application for downloading TikTok videos without watermarks. Built with Express.js, Next.js, TypeScript, and yt-dlp.
 
+<img width="699" height="691" alt="image" src="https://github.com/user-attachments/assets/872a5672-bd03-42f1-b820-aefb8c0c567d" />
+
 ## Features
 
 - **Web Interface** - Clean, minimal dark mode UI built with Next.js
