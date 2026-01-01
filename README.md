@@ -1,10 +1,12 @@
-<img width="850" height="774" alt="image" src="https://github.com/user-attachments/assets/63986bc5-7269-45b5-ba00-03f8e72b6c09" /># TikTok Video Downloader API
+<img width="850" height="774" alt="image" src="https://github.com/user-attachments/assets/63986bc5-7269-45b5-ba00-03f8e72b6c09" />
+
+# TikTok Video Downloader API
 
 A lightweight, production-ready REST API for downloading TikTok videos without watermarks. Built with Express.js, TypeScript, and yt-dlp. Includes an optional web interface for convenience.
 
 ## Live Demo
 
-**🌐 Live API**: [https://tiktok-downloader-production-635b.up.railway.app](https://tiktok-downloader-production-635b.up.railway.app)
+**Live API**: [https://tiktok-downloader-production-635b.up.railway.app](https://tiktok-downloader-production-635b.up.railway.app)
 
 - **Frontend**: [https://tiktok-downloader-production-635b.up.railway.app/web](https://tiktok-downloader-production-635b.up.railway.app/web)
 - **API Health**: [https://tiktok-downloader-production-635b.up.railway.app/health](https://tiktok-downloader-production-635b.up.railway.app/health)
